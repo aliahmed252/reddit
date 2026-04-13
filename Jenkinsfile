@@ -77,7 +77,7 @@ pipeline {
                       sh "docker rmi ${IMAGE_NAME}:latest"
                  }
              }
-         }
+        
 	 // stage("Trigger CD Pipeline") {
   //           steps {
   //               script {
@@ -97,5 +97,6 @@ pipeline {
                attachmentsPattern: 'trivyfs.txt,trivyimage.txt'
         }
      }
-	}
+   }
+  }
 }
