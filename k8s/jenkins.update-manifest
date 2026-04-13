@@ -28,7 +28,7 @@ pipeline {
                 sh """
                     git config --global user.name "aliahmed252"
                     git config --global user.email "securevbn999@gmail.com"
-                    git add deployment.yaml
+                    git add k8s/deployment.yaml
                     git commit -m "Updated Deployment Manifest"
                 """
                 withCredentials([gitUsernamePassword(credentialsId: 'github-token', gitToolName: 'Default')]) {
