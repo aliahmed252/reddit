@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: reddit-clone-app
-          image: aliahmed2005/reddit-clone-ci:1.0.0-9
+          image: aliahmed2005/reddit-clone-ci:1.0.0-26
           resources:
             limits:
               cpu: "1"
