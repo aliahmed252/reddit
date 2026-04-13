@@ -1,15 +1,15 @@
 pipeline {
     agent any
     tools {
-        jdk 'jdk17'
-        nodejs 'node16'
+        jdk 'jdk'
+        nodejs 'node 25'
     }
     environment {
         SCANNER_HOME = tool 'sonar-scanner'
-        APP_NAME = "reddit-clone-pipeline"
+        APP_NAME = "Reddit-Clone-CI"
         RELEASE = "1.0.0"
-        DOCKER_USER = "ashfaque9x"
-        DOCKER_PASS = 'dockerhub'
+        DOCKER_USER = "aliahmed252"
+        DOCKER_PASS = 'dockerhub-token'
         IMAGE_NAME = "${DOCKER_USER}" + "/" + "${APP_NAME}"
         IMAGE_TAG = "${RELEASE}-${BUILD_NUMBER}"
 	JENKINS_API_TOKEN = credentials("JENKINS_API_TOKEN")
@@ -22,7 +22,7 @@ pipeline {
         }
         stage('Checkout from Git') {
             steps {
-                git branch: 'main', url: 'https://github.com/Ashfaque-9x/a-reddit-clone.git'
+                git branch: 'main', url: 'https://github.com/aliahmed252/reddit.git'
             }
         }
         stage("Sonarqube Analysis") {
@@ -36,7 +36,7 @@ pipeline {
         stage("Quality Gate") {
             steps {
                 script {
-                    waitForQualityGate abortPipeline: false, credentialsId: 'SonarQube-Token'
+                    waitForQualityGate abortPipeline: false, credentialsId: 'sonarqube-token'
                 }
             }
         }
@@ -70,32 +70,32 @@ pipeline {
                  }
              }
          }
-	 stage ('Cleanup Artifacts') {
-             steps {
-                 script {
-                      sh "docker rmi ${IMAGE_NAME}:${IMAGE_TAG}"
-                      sh "docker rmi ${IMAGE_NAME}:latest"
-                 }
-             }
-         }
-	 stage("Trigger CD Pipeline") {
-            steps {
-                script {
-                    sh "curl -v -k --user clouduser:${JENKINS_API_TOKEN} -X POST -H 'cache-control: no-cache' -H 'content-type: application/x-www-form-urlencoded' --data 'IMAGE_TAG=${IMAGE_TAG}' 'ec2-65-2-187-142.ap-south-1.compute.amazonaws.com:8080/job/Reddit-Clone-CD/buildWithParameters?token=gitops-token'"
-                }
-            }
-         }
-     }
-     post {
-        always {
-           emailext attachLog: true,
-               subject: "'${currentBuild.result}'",
-               body: "Project: ${env.JOB_NAME}<br/>" +
-                   "Build Number: ${env.BUILD_NUMBER}<br/>" +
-                   "URL: ${env.BUILD_URL}<br/>",
-               to: 'ashfaque.s510@gmail.com',                              
-               attachmentsPattern: 'trivyfs.txt,trivyimage.txt'
-        }
-     }
+	 // stage ('Cleanup Artifacts') {
+  //            steps {
+  //                script {
+  //                     sh "docker rmi ${IMAGE_NAME}:${IMAGE_TAG}"
+  //                     sh "docker rmi ${IMAGE_NAME}:latest"
+  //                }
+  //            }
+  //        }
+	 // stage("Trigger CD Pipeline") {
+  //           steps {
+  //               script {
+  //                   sh "curl -v -k --user clouduser:${JENKINS_API_TOKEN} -X POST -H 'cache-control: no-cache' -H 'content-type: application/x-www-form-urlencoded' --data 'IMAGE_TAG=${IMAGE_TAG}' 'ec2-65-2-187-142.ap-south-1.compute.amazonaws.com:8080/job/Reddit-Clone-CD/buildWithParameters?token=gitops-token'"
+  //               }
+  //           }
+  //        }
+  //    }
+  //    post {
+  //       always {
+  //          emailext attachLog: true,
+  //              subject: "'${currentBuild.result}'",
+  //              body: "Project: ${env.JOB_NAME}<br/>" +
+  //                  "Build Number: ${env.BUILD_NUMBER}<br/>" +
+  //                  "URL: ${env.BUILD_URL}<br/>",
+  //              to: 'ashfaque.s510@gmail.com',                              
+  //              attachmentsPattern: 'trivyfs.txt,trivyimage.txt'
+  //       }
+  //    }
     
 }
